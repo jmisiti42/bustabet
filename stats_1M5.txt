@@ -1,0 +1,15 @@
+var config = {
+    payout: {
+        value: 90, type: 'multiplier', label: 'Base payout'
+    },
+};
+
+let hiddenConfigs = {
+    wager: {
+        value: Math.floor(userInfo.simulatedBalance / 100), type: 'balance', label: 'Actual bet'
+    },
+    payout: {
+        value: 90, type: 'multiplier', label: 'Actual payout'
+    }
+};
+
