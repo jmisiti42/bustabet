@@ -1,15 +1,21 @@
-const express = require('express');
-const app = express();
+const   cors = require('cors'),
+        express = require('express'),
+        http = require('http'),
+        bodyParser = require('body-parser'),
+        PORT = 3300,
+        app = express(),
+        server = http.createServer(app);
 
-// app.use(function(req, res, next) {
-//     res.header("Access-Control-Allow-Origin", "*");
-//     next();
-// });
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
   
-app.post('/', function (req, res) {
+app.post('/rashpalsingh', function (req, res) {
+  console.log('rashpalsingh');
+  console.table(req.body);
   res.send({ success: true });
 })
 
-app.listen(3300, function () {
+server.listen(PORT, function () {
   console.log('Example app listening on port 3300!')
 })

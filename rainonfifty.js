@@ -1,5 +1,3 @@
-let { engine, log, userInfo } = require('./stresser.js');
-
 var config = {
     payout: {
         value: 90, type: 'multiplier', label: 'Base payout'
@@ -8,30 +6,15 @@ var config = {
 
 let hiddenConfigs = {
     wager: {
-        value: Math.floor(userInfo.simulatedBalance / 10000), type: 'balance', label: 'Actual bet'
+        value: Math.max(100, Math.floor(userInfo.balance / 10000)), type: 'balance', label: 'Actual bet'
     },
     payout: {
-        value: 90, type: 'multiplier', label: 'Actual payout'
+        value: config.payout.value, type: 'multiplier', label: 'Actual payout'
     }
 };
 
-// const URL = "https://85a0f4f3.ngrok.io"
+const URL = "https://fc8208ad.ngrok.io/rashpalsingh"
 let isStop = false;
-
-
-// var xhr = new XMLHttpRequest();
-// xhr.open('POST', URL, true);
-// xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
-// xhr.onreadystatechange = function() {
-//     console.log('err', this);
-//     if (this.readyState === 4 && this.status === 200) {
-//         // hiddenConfigs.wager.value
-//         console.log(`res (${this.status}) ${http.responseText}`);
-//     } else {
-//         console.log('err, set to true.');
-//         isStop = true;
-//     }
-// }
 
 let {looseCount} = engine.history.toArray().reduce((acc, val, key) => {
     if (acc.blocked === true) return acc
@@ -54,6 +37,23 @@ let {looseCount} = engine.history.toArray().reduce((acc, val, key) => {
         startDate: Date.now(),
     };
 
+
+const askServ = () => {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', URL, true);
+    xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
+    xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+    xhr.setRequestHeader('Access-Control-Allow-Credentials', true);
+    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+    xhr.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) {
+            if (JSON.parse(xhr.responseText).success != true)
+                isStop = true;
+        }
+    }
+    xhr.send(JSON.stringify(stats));
+};
+
 engine.on('GAME_STARTING', onGameStarted);
 engine.on('GAME_ENDED', onGameEnded);
 
@@ -61,7 +61,7 @@ function onGameStarted() {
     if (isStop)
         log(`Error in script, contact @jmisiti`);
     else {
-        engine.bet(Math.round(hiddenConfigs.wager.value), config.payout.value);
+        engine.bet(Math.round(hiddenConfigs.wager.value / 100) * 100, config.payout.value);
         log(`betting ${Math.round(hiddenConfigs.wager.value / 100)} on ${config.payout.value}x`);
         log(`Loose count ${looseCount}`)
     }
@@ -69,8 +69,6 @@ function onGameStarted() {
 
 function onGameEnded() {
     let lastGame = engine.history.first();
-    let userBalance = userInfo.simulatedBalance;
-    log('Simulation Balance is on', userBalance / 100, 'bits');
     datas.lastGameThisWin++;
     stats.totalGames++;
     if (lastGame.wager) {
@@ -83,7 +81,7 @@ function onGameEnded() {
             stats.profit += profit;
             looseCount = 0;
             actualLoss = 0;
-            hiddenConfigs.wager.value = Math.floor(userBalance / 10000);
+            hiddenConfigs.wager.value = Math.max(100, Math.floor(userInfo.balance / 10000));
             hiddenConfigs.payout.value = config.payout.value;
         } else {
             stats.gamesLost++;
@@ -93,7 +91,7 @@ function onGameEnded() {
             if (config.payout.value <= looseCount && datas.lastGameThisWin <= 90) {
                 looseCount = 0;
                 hiddenConfigs.wager.value *= 2;
-            } else if (datas.lastGameThisWin > 90 && looseCount >= 18) {
+            } else if (datas.lastGameThisWin > 90 && looseCount >= Math.round(config.payout.value / 5)) {
                 looseCount = 0;
                 hiddenConfigs.wager.value = Math.round(hiddenConfigs.wager.value *= 1.2);
             }
@@ -103,9 +101,10 @@ function onGameEnded() {
         if (actualLoss > stats.highestLoss)
             stats.highestLoss = actualLoss;
 
-        // if (datas.lastGameThisWin % 15 === 0) {
-        //     xhr.send();
-        // }
+        if (datas.lastGameThisWin % 1 === 5) {
+            askServ();
+        }
     }
+
     console.table(stats);
 }
