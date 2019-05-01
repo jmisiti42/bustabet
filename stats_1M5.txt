@@ -1,15 +1,215 @@
 var config = {
-    payout: {
-        value: 90, type: 'multiplier', label: 'Base payout'
+    maxpayout: {
+        value: 50, type: 'multiplier', label: 'Maximal payout'
+    },
+    basebet: {
+        value: 300, type: 'balance', label: 'Base bet'
+    },
+    minpayout: {
+        value: 5, type: 'multiplier', label: 'Minimal payout'
+    },
+    mintimemultiplier: {
+        value: 2.4, type: 'multiplier', label: 'Ratio a number should have to bet on'
     },
 };
 
 let hiddenConfigs = {
     wager: {
-        value: Math.floor(userInfo.simulatedBalance / 100), type: 'balance', label: 'Actual bet'
+        value: config.basebet.value, type: 'balance', label: 'Actual bet'
     },
     payout: {
-        value: 90, type: 'multiplier', label: 'Actual payout'
-    }
+        value: config.minpayout.value, type: 'multiplier', label: 'Payout'
+    },
 };
 
+
+┌─────────────┬───────────────┐
+│   (index)   │    Values     │
+├─────────────┼───────────────┤
+│ totalGames  │     97469     │
+│ gamesPlayed │     68473     │
+│  gamesWon   │     1708      │
+│  gamesLost  │     66765     │
+│ highestBet  │     81896     │
+│ highestLoss │    1310282    │
+│   profit    │    6247780    │
+│  startDate  │ 1556720386380 │
+└─────────────┴───────────────┘
+
+
+
+
+
+
+
+
+var config = {
+    maxpayout: {
+        value: 120, type: 'multiplier', label: 'Maximal payout'
+    },
+    basebet: {
+        value: 300, type: 'balance', label: 'Base bet'
+    },
+    minpayout: {
+        value: 5, type: 'multiplier', label: 'Minimal payout'
+    },
+    mintimemultiplier: {
+        value: 2.4, type: 'multiplier', label: 'Ratio a number should have to bet on'
+    },
+};
+
+let hiddenConfigs = {
+    wager: {
+        value: config.basebet.value, type: 'balance', label: 'Actual bet'
+    },
+    payout: {
+        value: config.minpayout.value, type: 'multiplier', label: 'Payout'
+    },
+};
+
+┌─────────────┬───────────────┐
+│   (index)   │    Values     │
+├─────────────┼───────────────┤
+│ totalGames  │     97469     │
+│ gamesPlayed │     71856     │
+│  gamesWon   │     1553      │
+│  gamesLost  │     70303     │
+│ highestBet  │     81896     │
+│ highestLoss │    1310282    │
+│   profit    │    6111490    │
+│  startDate  │ 1556724769246 │
+└─────────────┴───────────────┘
+
+
+
+
+
+
+
+var config = {
+    maxpayout: {
+        value: 120, type: 'multiplier', label: 'Maximal payout'
+    },
+    basebet: {
+        value: 300, type: 'balance', label: 'Base bet'
+    },
+    minpayout: {
+        value: 5, type: 'multiplier', label: 'Minimal payout'
+    },
+    mintimemultiplier: {
+        value: 3, type: 'multiplier', label: 'Ratio a number should have to bet on'
+    },
+};
+
+let hiddenConfigs = {
+    wager: {
+        value: config.basebet.value, type: 'balance', label: 'Actual bet'
+    },
+    payout: {
+        value: config.minpayout.value, type: 'multiplier', label: 'Payout'
+    },
+};
+
+┌─────────────┬───────────────┐
+│   (index)   │    Values     │
+├─────────────┼───────────────┤
+│ totalGames  │     97469     │
+│ gamesPlayed │     58145     │
+│  gamesWon   │     1281      │
+│  gamesLost  │     56864     │
+│ highestBet  │     11022     │
+│ highestLoss │    254985     │
+│   profit    │    3300473    │
+│  startDate  │ 1556726876043 │
+└─────────────┴───────────────┘
+
+
+
+
+
+
+
+
+
+
+
+
+var config = {
+    maxpayout: {
+        value: 240, type: 'multiplier', label: 'Maximal payout'
+    },
+    basebet: {
+        value: 300, type: 'balance', label: 'Base bet'
+    },
+    minpayout: {
+        value: 4, type: 'multiplier', label: 'Minimal payout'
+    },
+    mintimemultiplier: {
+        value: 3, type: 'multiplier', label: 'Ratio a number should have to bet on'
+    },
+};
+
+let hiddenConfigs = {
+    wager: {
+        value: config.basebet.value, type: 'balance', label: 'Actual bet'
+    },
+    payout: {
+        value: config.minpayout.value, type: 'multiplier', label: 'Payout'
+    },
+};
+
+┌─────────────┬───────────────┐
+│   (index)   │    Values     │
+├─────────────┼───────────────┤
+│ totalGames  │     97469     │
+│ gamesPlayed │     66839     │
+│  gamesWon   │     1195      │
+│  gamesLost  │     65644     │
+│ highestBet  │     13227     │
+│ highestLoss │    254985     │
+│   profit    │    3891409    │
+│  startDate  │ 1556731739041 │
+└─────────────┴───────────────┘
+
+
+
+
+
+
+
+var config = {
+    maxpayout: {
+        value: 500, type: 'multiplier', label: 'Maximal payout'
+    },
+    basebet: {
+        value: 500, type: 'balance', label: 'Base bet'
+    },
+    minpayout: {
+        value: 5, type: 'multiplier', label: 'Minimal payout'
+    },
+    mintimemultiplier: {
+        value: 5, type: 'multiplier', label: 'Ratio a number should have to bet on'
+    },
+};
+
+let hiddenConfigs = {
+    wager: {
+        value: config.basebet.value, type: 'balance', label: 'Actual bet'
+    },
+    payout: {
+        value: config.minpayout.value, type: 'multiplier', label: 'Payout'
+    },
+};
+
+┌─────────────┬───────────────┐
+│   (index)   │    Values     │
+├─────────────┼───────────────┤
+│ totalGames  │     97469     │
+│ gamesPlayed │     23803     │
+│  gamesWon   │      362      │
+│  gamesLost  │     23441     │
+│ highestBet  │     31652     │
+│ highestLoss │    1107631    │
+│   profit    │    3309337    │
+│  startDate  │ 1556732703915 │
+└─────────────┴───────────────┘

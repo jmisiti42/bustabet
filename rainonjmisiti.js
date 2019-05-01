@@ -11,7 +11,7 @@ var config = {
         value: 5, type: 'multiplier', label: 'Minimal payout'
     },
     mintimemultiplier: {
-        value: 2.4, type: 'multiplier', label: 'Ratio a number should have to bet on'
+        value: 5, type: 'multiplier', label: 'Ratio a number should have to bet on'
     },
 };
 
@@ -53,7 +53,7 @@ const gameBestBet = (lastHash) => {
     let best = { payout: 0, value: 0 };
     for (let i = config.minpayout.value; i <= config.maxpayout.value; i++) {
         for (let x = 0; x < (5 * config.maxpayout.value); x++) {
-            if (gameBusts[x].bust >= i) {
+            if (gameBusts[x] && gameBusts[x].bust >= i) {
                 break;
             }
             res[i] = res[i] ? res[i] + 1 : 1;

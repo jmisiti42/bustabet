@@ -1,9 +1,8 @@
 const { values } = require('./1M5');
-const process = require('process');
 const log = console.log;
 const CryptoJS = require("crypto-js");
 
-const NUM_GAMES = 1499999;
+const NUM_GAMES = 100000;
 
 const listeners = {
   aListener: null,
