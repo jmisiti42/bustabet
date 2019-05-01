@@ -2,10 +2,10 @@ let { engine, log, CryptoJS } = require('./stresser.js');
 
 var config = {
     maxpayout: {
-        value: 400, type: 'multiplier', label: 'Maximal payout'
+        value: 90, type: 'multiplier', label: 'Maximal payout'
     },
     basebet: {
-        value: 500, type: 'balance', label: 'Base bet'
+        value: 300, type: 'balance', label: 'Base bet'
     },
     minpayout: {
         value: 5, type: 'multiplier', label: 'Minimal payout'
@@ -17,10 +17,10 @@ var config = {
 
 let hiddenConfigs = {
     wager: {
-        value: 100, type: 'balance', label: 'Actual bet'
+        value: config.basebet.value, type: 'balance', label: 'Actual bet'
     },
     payout: {
-        value: 4, type: 'multiplier', label: 'Payout'
+        value: config.minpayout.value, type: 'multiplier', label: 'Payout'
     },
 };
 
@@ -28,6 +28,7 @@ let play = false,
     looseCount = 0,
     datas = { value: 0, payout: 0 },
     actualLoss = 0,
+    gameBusts = [],
     stats = {
         totalGames: 0,
         gamesPlayed: 0,
@@ -47,7 +48,7 @@ if (typeof document !== 'undefined' && document.getElementsByClassName('scriptCr
 }
 
 const gameBestBet = (lastHash) => {
-    let gameBusts = gameBustArray(lastHash);
+    gameBusts = gameBusts[0] ? gameBusts : gameBustArray(lastHash);
     let res = [];
     let best = { payout: 0, value: 0 };
     for (let i = config.minpayout.value; i <= config.maxpayout.value; i++) {
@@ -71,7 +72,7 @@ const gameBustArray = (lastHash) => {
     let gameValArray = [];
     let prevHash = null;
 
-    for (let i = 0; i < (5 * config.maxpayout.value); i++) {
+    for (let i = 0; i < (Math.ceil(config.mintimemultiplier.value) * config.maxpayout.value); i++) {
         let hash = String(prevHash ? CryptoJS.SHA256(String(prevHash)) : lastHash);
         let bust = gameResult(hash, '0000000000000000004d6ec16dafe9d8370958664c1dc422f452892264c59526');
         gameValArray.push({ bust });
@@ -107,9 +108,9 @@ engine.on('GAME_ENDED', onGameEnded);
 
 function onGameStarted() {
     if (play) {
-        engine.bet(hiddenConfigs.wager.value, hiddenConfigs.payout.value);
+        engine.bet(Math.round(hiddenConfigs.wager.value / 100) * 100, hiddenConfigs.payout.value);
         log(`betting ${Math.round(hiddenConfigs.wager.value / 100)} on ${hiddenConfigs.payout.value}x (best is ${datas.value} on ${datas.payout}x)`);
-        log(`Loose counter is at ${looseCount} / ${hiddenConfigs.payout.value / 2} `);
+        log(`Loose counter is at ${looseCount} / ${(Math.floor(hiddenConfigs.payout.value / 5))} `);
     } else {
         log(`Not betting, no good number found. (best is ${datas.value} on ${datas.payout}x)`);
     }
@@ -118,12 +119,15 @@ function onGameStarted() {
 function onGameEnded() {
     let lastGame = engine.history.first();
 
+    if (gameBusts[0])
+        gameBusts.unshift(lastGame);
     datas = gameBestBet(engine.history.first().hash);
     stats.totalGames++;
     if (lastGame.wager) {
         stats.gamesPlayed++;
         if (lastGame.cashedAt) {
             stats.gamesWon++;
+            gameBusts = [];
             var profit = Math.round((hiddenConfigs.wager.value * hiddenConfigs.payout.value - hiddenConfigs.wager.value) / 100)
             log('we won', profit, 'bits');
             stats.profit += profit;
@@ -141,9 +145,9 @@ function onGameEnded() {
             log('we lost', Math.round(hiddenConfigs.wager.value / 100), 'bits');
             actualLoss += Math.round(hiddenConfigs.wager.value / 100);
             looseCount++;
-            if (hiddenConfigs.payout.value / 2 <= looseCount) {
+            if (looseCount >= Math.floor(hiddenConfigs.payout.value / 5)) {
                 looseCount = 0;
-                hiddenConfigs.wager.value *= 2;
+                hiddenConfigs.wager.value = Math.ceil(hiddenConfigs.wager.value *= 1.2);
             }
             if (hiddenConfigs.wager.value / 100 > stats.highestBet)
                 stats.highestBet = Math.round(hiddenConfigs.wager.value / 100);
@@ -159,6 +163,5 @@ function onGameEnded() {
             hiddenConfigs.payout.value = datas.payout;
         }
     }
-    if (stats.totalGames >= 1400000)
-        console.table(stats);
+    console.table(stats);
 }

@@ -1,10 +1,16 @@
 const   cors = require('cors'),
         express = require('express'),
-        http = require('http'),
+        fs = require('fs'),
+        https = require('https'),
         bodyParser = require('body-parser'),
-        PORT = 3300,
-        app = express(),
-        server = http.createServer(app);
+        path = require('path'),
+        PORT = 80,
+        app = express();
+
+const httpsOptions = {
+  cert: fs.readFileSync(path.join(__dirname, 'ssl', 'server.crt')),
+  key: fs.readFileSync(path.join(__dirname, 'ssl', 'server.key')),
+}
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -20,6 +26,6 @@ app.get('/test', (req, res) => {
   res.send('ok');
 });
 
-server.listen(PORT, function () {
-  console.log('Example app listening on port 3300!')
+https.createServer(httpsOptions, app).listen(PORT, () => {
+  console.log(`Listening ${PORT}`)
 })

@@ -1,3 +1,5 @@
+let { engine, log, userInfo } = require('./stresser.js');
+
 var config = {
     payout: {
         value: 90, type: 'multiplier', label: 'Base payout'
@@ -6,15 +8,12 @@ var config = {
 
 let hiddenConfigs = {
     wager: {
-        value: Math.max(100, Math.floor(userInfo.balance / 10000)), type: 'balance', label: 'Actual bet'
+        value: Math.max(100, Math.floor(userInfo.balance / 5000)), type: 'balance', label: 'Actual bet'
     },
     payout: {
         value: config.payout.value, type: 'multiplier', label: 'Actual payout'
     }
 };
-
-const URL = "ec2-35-180-74-120.eu-west-3.compute.amazonaws.com/rashpalsingh"
-let isStop = false;
 
 let {looseCount} = engine.history.toArray().reduce((acc, val, key) => {
     if (acc.blocked === true) return acc
@@ -37,34 +36,13 @@ let {looseCount} = engine.history.toArray().reduce((acc, val, key) => {
         startDate: Date.now(),
     };
 
-
-const askServ = () => {
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', URL, true);
-    xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
-    xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-    xhr.setRequestHeader('Access-Control-Allow-Credentials', true);
-    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
-    xhr.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-            if (JSON.parse(xhr.responseText).success != true)
-                isStop = true;
-        }
-    }
-    xhr.send(JSON.stringify(stats));
-};
-
 engine.on('GAME_STARTING', onGameStarted);
 engine.on('GAME_ENDED', onGameEnded);
 
 function onGameStarted() {
-    if (isStop)
-        log(`Error in script, contact @jmisiti`);
-    else {
-        engine.bet(Math.round(hiddenConfigs.wager.value / 100) * 100, config.payout.value);
-        log(`betting ${Math.round(hiddenConfigs.wager.value / 100)} on ${config.payout.value}x`);
-        log(`Loose count ${looseCount}`)
-    }
+    engine.bet(Math.round(hiddenConfigs.wager.value / 100) * 100, config.payout.value);
+    log(`betting ${Math.round(hiddenConfigs.wager.value / 100)} on ${config.payout.value}x`);
+    log(`Loose count ${looseCount}`)
 }
 
 function onGameEnded() {
@@ -81,7 +59,7 @@ function onGameEnded() {
             stats.profit += profit;
             looseCount = 0;
             actualLoss = 0;
-            hiddenConfigs.wager.value = Math.max(100, Math.floor(userInfo.balance / 10000));
+            hiddenConfigs.wager.value = Math.max(100, Math.floor(userInfo.balance / 5000));
             hiddenConfigs.payout.value = config.payout.value;
         } else {
             stats.gamesLost++;
@@ -93,17 +71,13 @@ function onGameEnded() {
                 hiddenConfigs.wager.value *= 2;
             } else if (datas.lastGameThisWin > 90 && looseCount >= Math.round(config.payout.value / 5)) {
                 looseCount = 0;
-                hiddenConfigs.wager.value = Math.round(hiddenConfigs.wager.value *= 1.2);
+                hiddenConfigs.wager.value = Math.ceil(hiddenConfigs.wager.value *= 1.2);
             }
             if (hiddenConfigs.wager.value / 100 > stats.highestBet)
                 stats.highestBet = Math.round(hiddenConfigs.wager.value / 100);
         }
         if (actualLoss > stats.highestLoss)
             stats.highestLoss = actualLoss;
-
-        if (datas.lastGameThisWin % 5 === 0) {
-            askServ();
-        }
     }
 
     console.table(stats);
