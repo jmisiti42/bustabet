@@ -13,7 +13,7 @@ let hiddenConfigs = {
     }
 };
 
-const URL = "https://fc8208ad.ngrok.io/rashpalsingh"
+const URL = "ec2-35-180-74-120.eu-west-3.compute.amazonaws.com/rashpalsingh"
 let isStop = false;
 
 let {looseCount} = engine.history.toArray().reduce((acc, val, key) => {
@@ -101,7 +101,7 @@ function onGameEnded() {
         if (actualLoss > stats.highestLoss)
             stats.highestLoss = actualLoss;
 
-        if (datas.lastGameThisWin % 1 === 5) {
+        if (datas.lastGameThisWin % 5 === 0) {
             askServ();
         }
     }

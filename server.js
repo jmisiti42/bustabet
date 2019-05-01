@@ -16,6 +16,10 @@ app.post('/rashpalsingh', function (req, res) {
   res.send({ success: true });
 })
 
+app.get('/test', (req, res) => {
+  res.send('ok');
+});
+
 server.listen(PORT, function () {
   console.log('Example app listening on port 3300!')
 })
